@@ -32,4 +32,18 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Product[] Returns an array of Product objects
+    */
+    public function findByPriceBetween($minPrice, $maxPrice)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.price >= :minPrice')
+            ->andWhere('p.price <= :maxPrice')
+            ->setParameter('minPrice', $minPrice)
+            ->setParameter('maxPrice', $maxPrice)
+            ->getQuery()
+            ->getResult();
+    }
 }
