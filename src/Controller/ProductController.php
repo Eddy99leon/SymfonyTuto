@@ -139,6 +139,7 @@ class ProductController extends AbstractController
         $product->setName($name);
         $product->setDescription($description);
         $product->setPrice($price);
+
         $this->entityManagerInterface->persist($product);
         $this->entityManagerInterface->flush();
 
@@ -150,6 +151,50 @@ class ProductController extends AbstractController
             'price' => $product->getPrice(),
         ];
 
-        return $this->json(["message" => "ajouter avec succes", "data" => $data]);
+        return $this->json(["message" => "Produit ajouter avec succes!", "data" => $data]);
+    }
+
+    /**
+     * delete product
+     */
+    #[Route('/product/{id}', name: 'delete_product', methods: ['DELETE'])]
+    public function DeleteProduct($id)
+    {
+        // Récupérer le produit à supprimer
+        $product = $this->productRepository->find($id);
+
+        // Vérifier si le produit existe
+        if (!$product) {
+            return new JsonResponse(["message" => "Le produit avec l'id $id n'existe pas."], Response::HTTP_NOT_FOUND);
+        }
+
+        // Supprimer le produit
+        $this->entityManagerInterface->remove($product);
+        $this->entityManagerInterface->flush();
+
+        return $this->json(["message" => "Produit supprimé avec succès!"]);
+    }
+
+    /**
+     * update product
+     */
+    #[Route('/product/{id}', name: 'update_product', methods: ['PUT'])]
+    public function UpdateProduct($id, Request $request)
+    {
+        //Récuperation du produit à mettre à jour
+        $product = $this->productRepository->find($id);
+
+        //Vérification du product
+        if(!$product){
+            return new JsonResponse(["message" => "Le produit avec l'id $id n'existe pas."], Response::HTTP_NOT_FOUND);
+        }
+
+        // Récupérer les données de la requête
+        $requestData = json_decode($request->getContent(), true);
+
+        //eto zao
+        dd($requestData);
+
+        return $this->json(["message" => "Product mise à jour avec succès", "data" => $requestData]);
     }
 }
